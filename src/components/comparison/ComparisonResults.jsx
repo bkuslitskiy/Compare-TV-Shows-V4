@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { FixedSizeList as List } from 'react-window';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { getImageUrl, getReleaseYear } from '../../utils/tmdbHelpers';
 
@@ -493,66 +494,83 @@ function ComparisonResults({ sharedCast = [], sharedCrew = [], projects = [] }) 
           
           {/* Body rows with people and their roles */}
           {sortedPeople.length > 0 ? (
-            sortedPeople.map((person) => (
-              <div 
-                key={`row-${person.id}`}
-                className="table-row grid" 
-                style={{ gridTemplateColumns: `280px repeat(${projects.length}, minmax(180px, 1fr))` }}
+            <div style={{ height: Math.min(600, sortedPeople.length * 100) }}>
+              <List
+                height={Math.min(600, sortedPeople.length * 100)}
+                itemCount={sortedPeople.length}
+                itemSize={100}
+                width="100%"
+                className="virtualized-list"
               >
-                {/* Person cell */}
-                <div className="person-cell bg-white dark:bg-gray-800 border-b border-r border-gray-200 dark:border-gray-700 p-4 flex items-center sticky left-0 z-5">
-                  <img
-                    src={getImageUrl(person.profile_path, 'w92')}
-                    alt={person.name}
-                    className="w-12 h-12 object-cover rounded-full mr-3 shadow"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = '/placeholder-image.png';
-                    }}
-                  />
-                  <div>
-                    <div className="font-medium">{person.name}</div>
-                    <div className="flex items-center mt-1 gap-1">
-                      {getDepartmentBadge(person.department || (person.roleType === 'cast' ? 'Cast' : 'Crew'))}
-                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-                        {person.projectCount} projects
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Role cells for each project */}
-                {projects.map((project) => {
-                  const role = findPersonRoleInProject(person, project);
+                {({ index, style }) => {
+                  const person = sortedPeople[index];
                   return (
                     <div 
-                      key={`cell-${person.id}-${project.id}`}
-                      className="bg-white dark:bg-gray-800 border-b border-r border-gray-200 dark:border-gray-700 p-4"
+                      key={`row-${person.id}`}
+                      className="table-row grid" 
+                      style={{ 
+                        ...style,
+                        gridTemplateColumns: `280px repeat(${projects.length}, minmax(180px, 1fr))`,
+                        width: `calc(280px + ${projects.length * 180}px)`
+                      }}
                     >
-                      {role ? (
-                        <div className="text-sm">
-                          <div className="font-medium">{formatRole(role, person.roleType)}</div>
-                          {role.department && role.department !== formatRole(role, person.roleType) && (
-                            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                              {role.department}
-                            </div>
-                          )}
-                          {role.episodeCount && role.episodeCount > 1 && (
-                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                              {role.episodeCount} episodes
-                            </div>
-                          )}
+                      {/* Person cell */}
+                      <div className="person-cell bg-white dark:bg-gray-800 border-b border-r border-gray-200 dark:border-gray-700 p-4 flex items-center sticky left-0 z-5">
+                        <img
+                          src={getImageUrl(person.profile_path, 'w92')}
+                          alt={person.name}
+                          className="w-12 h-12 object-cover rounded-full mr-3 shadow"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/placeholder-image.png';
+                          }}
+                        />
+                        <div>
+                          <div className="font-medium">{person.name}</div>
+                          <div className="flex items-center mt-1 gap-1">
+                            {getDepartmentBadge(person.department || (person.roleType === 'cast' ? 'Cast' : 'Crew'))}
+                            <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                              {person.projectCount} projects
+                            </span>
+                          </div>
                         </div>
-                      ) : (
-                        <div className="text-sm text-gray-400 dark:text-gray-500 italic">
-                          Not Involved
-                        </div>
-                      )}
+                      </div>
+                      
+                      {/* Role cells for each project */}
+                      {projects.map((project) => {
+                        const role = findPersonRoleInProject(person, project);
+                        return (
+                          <div 
+                            key={`cell-${person.id}-${project.id}`}
+                            className="bg-white dark:bg-gray-800 border-b border-r border-gray-200 dark:border-gray-700 p-4"
+                          >
+                            {role ? (
+                              <div className="text-sm">
+                                <div className="font-medium">{formatRole(role, person.roleType)}</div>
+                                {role.department && role.department !== formatRole(role, person.roleType) && (
+                                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                    {role.department}
+                                  </div>
+                                )}
+                                {role.episodeCount && role.episodeCount > 1 && (
+                                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    {role.episodeCount} episodes
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="text-sm text-gray-400 dark:text-gray-500 italic">
+                                Not Involved
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   );
-                })}
-              </div>
-            ))
+                }}
+              </List>
+            </div>
           ) : (
             <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               No results match your filters. Try adjusting your filter criteria.

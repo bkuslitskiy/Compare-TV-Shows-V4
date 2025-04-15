@@ -1,4 +1,6 @@
 import { get } from './api';
+import * as cachedApi from './cachedApi';
+import cacheService from './cache';
 
 /**
  * Sleep for a specified number of milliseconds
@@ -33,7 +35,6 @@ const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
   throw lastError;
 };
 
-
 /**
  * Search for movies, TV shows, and people
  * @param {string} query - Search query
@@ -41,14 +42,7 @@ const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
  * @returns {Promise} Promise resolving to search results
  */
 export const searchMulti = async (query, page = 1) => {
-  try {
-    const result = await get('/search/multi', { query, page, include_adult: false });
-    return result || { results: [] };
-  } catch (error) {
-    console.error('Search error:', error);
-    // Return empty results instead of throwing
-    return { results: [] };
-  }
+  return cachedApi.searchMulti(query, page);
 };
 
 /**
@@ -57,7 +51,7 @@ export const searchMulti = async (query, page = 1) => {
  * @returns {Promise} Promise resolving to TV show details
  */
 export const getShowDetails = async (id) => {
-  return get(`/tv/${id}`);
+  return cachedApi.getShowDetails(id);
 };
 
 /**
@@ -66,7 +60,7 @@ export const getShowDetails = async (id) => {
  * @returns {Promise} Promise resolving to movie details
  */
 export const getMovieDetails = async (id) => {
-  return get(`/movie/${id}`);
+  return cachedApi.getMovieDetails(id);
 };
 
 /**
@@ -75,8 +69,7 @@ export const getMovieDetails = async (id) => {
  * @returns {Promise} Promise resolving to array of seasons
  */
 export const getShowSeasons = async (id) => {
-  const show = await getShowDetails(id);
-  return show.seasons;
+  return cachedApi.getShowSeasons(id);
 };
 
 /**
@@ -86,7 +79,7 @@ export const getShowSeasons = async (id) => {
  * @returns {Promise} Promise resolving to season details with episodes
  */
 export const getSeasonEpisodes = async (showId, seasonNumber) => {
-  return get(`/tv/${showId}/season/${seasonNumber}`);
+  return cachedApi.getSeasonEpisodes(showId, seasonNumber);
 };
 
 /**
@@ -97,7 +90,7 @@ export const getSeasonEpisodes = async (showId, seasonNumber) => {
  * @returns {Promise} Promise resolving to episode credits
  */
 export const getEpisodeCredits = async (showId, seasonNumber, episodeNumber) => {
-  return get(`/tv/${showId}/season/${seasonNumber}/episode/${episodeNumber}/credits`);
+  return cachedApi.getEpisodeCredits(showId, seasonNumber, episodeNumber);
 };
 
 /**
@@ -106,7 +99,7 @@ export const getEpisodeCredits = async (showId, seasonNumber, episodeNumber) => 
  * @returns {Promise} Promise resolving to movie credits
  */
 export const getMovieCredits = async (id) => {
-  return get(`/movie/${id}/credits`);
+  return cachedApi.getMovieCredits(id);
 };
 
 /**
@@ -115,9 +108,8 @@ export const getMovieCredits = async (id) => {
  * @returns {Promise} Promise resolving to aggregated credits
  */
 export const getShowAggregatedCredits = async (id) => {
-  return get(`/tv/${id}/aggregate_credits`);
+  return cachedApi.getShowAggregatedCredits(id);
 };
-
 
 /**
  * Get all credits for a TV show (across all episodes)
@@ -126,7 +118,19 @@ export const getShowAggregatedCredits = async (id) => {
  */
 export const getShowAllCredits = async (id) => {
   try {
-    // First try to get aggregated credits (more efficient)
+    // Create a cache key for this complex operation
+    const cacheKey = `show_all_credits_${id}`;
+    
+    // Try to get from cache first
+    const cachedData = cacheService.get(cacheKey);
+    if (cachedData) {
+      console.log(`Cache hit for ${cacheKey}`);
+      return cachedData;
+    }
+    
+    console.log(`Cache miss for ${cacheKey}, fetching from API`);
+    
+    // Get aggregated credits (more efficient)
     try {
       const aggregatedCredits = await getShowAggregatedCredits(id);
       const show = await getShowDetails(id);
@@ -157,7 +161,7 @@ export const getShowAllCredits = async (id) => {
         }
       }));
       
-      return {
+      const result = {
         id: show.id,
         name: show.name,
         type: 'tv',
@@ -166,6 +170,11 @@ export const getShowAllCredits = async (id) => {
         cast: processedCast,
         crew: processedCrew
       };
+      
+      // Cache the result
+      cacheService.set(cacheKey, result, cachedApi.CACHE_TTL.CREDITS);
+      
+      return result;
     } catch (error) {
       console.warn('Aggregated credits not available, falling back to episode-by-episode collection');
       // Fall back to episode-by-episode collection
@@ -261,7 +270,7 @@ export const getShowAllCredits = async (id) => {
       }
     }
     
-    return {
+    const result = {
       id: show.id,
       name: show.name,
       type: 'tv',
@@ -270,6 +279,11 @@ export const getShowAllCredits = async (id) => {
       cast: Array.from(allCast.values()),
       crew: Array.from(allCrew.values())
     };
+    
+    // Cache the result
+    cacheService.set(cacheKey, result, cachedApi.CACHE_TTL.CREDITS);
+    
+    return result;
   } catch (error) {
     console.error(`Error getting all credits for TV show ${id}:`, error);
     throw error;
@@ -283,6 +297,18 @@ export const getShowAllCredits = async (id) => {
  */
 export const getMovieWithCredits = async (id) => {
   try {
+    // Create a cache key for this complex operation
+    const cacheKey = `movie_with_credits_${id}`;
+    
+    // Try to get from cache first
+    const cachedData = cacheService.get(cacheKey);
+    if (cachedData) {
+      console.log(`Cache hit for ${cacheKey}`);
+      return cachedData;
+    }
+    
+    console.log(`Cache miss for ${cacheKey}, fetching from API`);
+    
     // Get movie details and credits in parallel
     const [movie, credits] = await Promise.all([
       getMovieDetails(id),
@@ -310,16 +336,45 @@ export const getMovieWithCredits = async (id) => {
       }
     }));
     
-    return {
+    const result = {
       ...movie,
       type: 'movie',
       cast: castWithMedia,
       crew: crewWithMedia
     };
+    
+    // Cache the result
+    cacheService.set(cacheKey, result, cachedApi.CACHE_TTL.CREDITS);
+    
+    return result;
   } catch (error) {
     console.error(`Error getting movie with credits ${id}:`, error);
     throw error;
   }
+};
+
+/**
+ * Clear all API cache
+ * @returns {boolean} Success status
+ */
+export const clearCache = () => {
+  return cachedApi.clearCache();
+};
+
+/**
+ * Get cache statistics
+ * @returns {Object} Cache statistics
+ */
+export const getCacheStats = () => {
+  return cachedApi.getCacheStats();
+};
+
+/**
+ * Get cache size in bytes
+ * @returns {number} Cache size in bytes
+ */
+export const getCacheSize = () => {
+  return cachedApi.getCacheSize();
 };
 
 export default {
@@ -332,5 +387,8 @@ export default {
   getMovieCredits,
   getShowAggregatedCredits,
   getShowAllCredits,
-  getMovieWithCredits
+  getMovieWithCredits,
+  clearCache,
+  getCacheStats,
+  getCacheSize
 };

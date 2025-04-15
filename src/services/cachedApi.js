@@ -50,11 +50,26 @@ export const getCached = async (endpoint, params = {}, ttl = CACHE_TTL.DETAILS) 
 export const searchMulti = async (query, page = 1) => {
   try {
     const result = await getCached('/search/multi', { query, page, include_adult: false }, CACHE_TTL.SEARCH);
-    return result || { results: [] };
+    return {
+      ...result,
+      results: result?.results || [],
+      page: result?.page || page,
+      total_pages: result?.total_pages || 0,
+      total_results: result?.total_results || 0,
+      hasNextPage: result?.page < result?.total_pages,
+      hasPrevPage: result?.page > 1
+    };
   } catch (error) {
     console.error('Search error:', error);
     // Return empty results instead of throwing
-    return { results: [] };
+    return { 
+      results: [],
+      page: page,
+      total_pages: 0,
+      total_results: 0,
+      hasNextPage: false,
+      hasPrevPage: page > 1
+    };
   }
 };
 

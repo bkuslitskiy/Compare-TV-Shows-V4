@@ -288,3 +288,18 @@ h3 {
     padding: 0.5rem;
   }
 }
+
+/* Virtualized list styles */
+.virtualized-list {
+  overflow-x: visible !important;
+  overflow-y: auto !important;
+}
+
+.virtualized-list > div {
+  overflow: visible !important;
+}
+
+.virtualized-list .table-row {
+  display: grid;
+  width: 100%;
+}

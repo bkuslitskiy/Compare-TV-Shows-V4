@@ -64,6 +64,54 @@ This document tracks common errors, issues, and challenges encountered during de
 - Add commonly used utility classes to the safelist
 - Consider using explicit class names for critical styling
 
+### 3. Responsive Utility Classes with @apply
+
+**Issue:** Tailwind CSS was unable to process responsive utility classes like `sm:grid-cols-2` when used with the `@apply` directive.
+
+**Impact:** This caused build errors with messages like: `[postcss] Cannot apply unknown utility class: sm:grid-cols-2`
+
+**Root Cause:** Tailwind CSS has limitations when using responsive variants with the `@apply` directive. The responsive variants are designed to be used directly in HTML/JSX, not within CSS.
+
+**Solution:**
+1. Removed the `@apply` directive with responsive variants from the CSS
+2. Replaced it with standard CSS using media queries that match Tailwind's breakpoints:
+   ```css
+   /* Selection grid */
+   .selection-grid {
+     display: grid;
+     grid-template-columns: repeat(1, minmax(0, 1fr)); /* grid-cols-1 */
+     gap: 1rem; /* gap-4 */
+     outline: none; /* focus:outline-none */
+   }
+
+   /* sm breakpoint (640px and up) */
+   @media (min-width: 640px) {
+     .selection-grid {
+       grid-template-columns: repeat(2, minmax(0, 1fr)); /* sm:grid-cols-2 */
+     }
+   }
+
+   /* md breakpoint (768px and up) */
+   @media (min-width: 768px) {
+     .selection-grid {
+       grid-template-columns: repeat(3, minmax(0, 1fr)); /* md:grid-cols-3 */
+     }
+   }
+
+   /* lg breakpoint (1024px and up) */
+   @media (min-width: 1024px) {
+     .selection-grid {
+       grid-template-columns: repeat(4, minmax(0, 1fr)); /* lg:grid-cols-4 */
+     }
+   }
+   ```
+
+**Prevention:**
+- Avoid using responsive variants with `@apply`
+- Use standard CSS with media queries for responsive styles
+- If you must use responsive variants, add them to the safelist and use them directly in HTML/JSX
+- Consider using Tailwind's responsive variants only in component templates, not in CSS
+
 ### 2. TMDB API Rate Limiting
 
 **Issue:** TMDB API has rate limits of 3-4 requests per second.
@@ -75,11 +123,55 @@ This document tracks common errors, issues, and challenges encountered during de
 - Added request queuing with a maximum of 3 requests per second
 - Added logging for rate-limited requests
 - Implemented delay mechanism for requests that exceed the rate limit
+- Added caching layer with localStorage to reduce API requests
+- Implemented batch processing for large datasets
+- Added memoization for expensive calculations
 
 **Future Improvements:**
-- Add caching layer to reduce the number of API requests
-- Implement exponential backoff for failed requests
+- Implement more sophisticated caching strategies
 - Add batch request capability where possible
+- Consider server-side caching for frequently accessed data
+
+### 3. Caching Implementation Issues
+
+**Issue:** The caching implementation in tmdb.js had incorrect function calls for storing data in the cache.
+
+**Impact:** Cache was not being properly populated, leading to repeated API calls for the same data.
+
+**Root Cause:** The code was using `cachedApi.getCached(cacheKey, {}, result)` to store data in the cache, but `getCached` is meant for retrieving data, not storing it.
+
+**Solution:**
+1. Imported the cacheService directly in tmdb.js
+2. Changed the cache storage calls to use `cacheService.set(cacheKey, result, ttl)` instead
+3. Updated the cache retrieval to use `cacheService.get(cacheKey)` directly
+4. Added better logging for cache hits and misses
+
+**Prevention:**
+- Clearly document the purpose and usage of each function
+- Use descriptive function names that indicate their purpose
+- Implement unit tests for caching functionality
+- Review code that interacts with the cache for correct usage
+
+### 4. Comparison Performance with Large TV Shows
+
+**Issue:** Comparing TV shows with many seasons and episodes caused performance issues and timeouts.
+
+**Impact:** Users experienced long loading times or errors when comparing popular TV shows with many seasons.
+
+**Root Cause:** The comparison algorithm was processing all episodes sequentially without any optimization for large datasets.
+
+**Solution:**
+1. Implemented batch processing for large datasets
+2. Added memoization for expensive calculations
+3. Optimized the role grouping algorithm for large datasets
+4. Improved error handling for API timeouts and failures
+5. Added more detailed logging for debugging
+
+**Prevention:**
+- Test with realistic data sizes during development
+- Implement performance monitoring
+- Consider the impact of large datasets on algorithms
+- Design algorithms with scalability in mind
 
 ## Anticipated Challenges
 

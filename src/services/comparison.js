@@ -1,3 +1,6 @@
+// Cache for memoization
+const memoCache = new Map();
+
 /**
  * Compares multiple projects to find shared people
  * @param {Array} projects - Array of projects with cast and crew
@@ -8,90 +11,150 @@ export const compareProjects = (projects) => {
     throw new Error('At least two projects are required for comparison');
   }
   
+  // Create a cache key based on project IDs
+  const cacheKey = projects
+    .map(p => `${p.id}-${p.type || p.media_type}`)
+    .sort()
+    .join('|');
+  
+  // Check if we have a cached result
+  if (memoCache.has(cacheKey)) {
+    console.log('Using cached comparison result');
+    return memoCache.get(cacheKey);
+  }
+  
+  console.time('compareProjects');
+  
   // Initialize maps to track people across projects
   const castMap = new Map();
   const crewMap = new Map();
   
+  // Track which projects each person appears in
+  const castProjectSets = new Map();
+  const crewProjectSets = new Map();
+  
+  // Process each project in batches for large datasets
+  const BATCH_SIZE = 500; // Process 500 people at a time
+  
   // Process each project
   projects.forEach(project => {
-    // Process cast
+    const projectKey = `${project.id}-${project.type || project.media_type}`;
+    
+    // Process cast in batches
     if (project.cast) {
-      project.cast.forEach(castMember => {
-        const personId = castMember.id;
+      for (let i = 0; i < project.cast.length; i += BATCH_SIZE) {
+        const batch = project.cast.slice(i, i + BATCH_SIZE);
         
-        if (!castMap.has(personId)) {
-          castMap.set(personId, {
-            id: personId,
-            name: castMember.name,
-            profile_path: castMember.profile_path,
-            roles: [],
-            projectCount: 0
+        batch.forEach(castMember => {
+          const personId = castMember.id;
+          
+          if (!castMap.has(personId)) {
+            castMap.set(personId, {
+              id: personId,
+              name: castMember.name,
+              profile_path: castMember.profile_path,
+              roles: [],
+              projectCount: 0
+            });
+            castProjectSets.set(personId, new Set());
+          }
+          
+          const person = castMap.get(personId);
+          const projectSet = castProjectSets.get(personId);
+          
+          // Only count each project once per person
+          if (!projectSet.has(projectKey)) {
+            projectSet.add(projectKey);
+            person.projectCount++;
+          }
+          
+          person.roles.push({
+            character: castMember.character,
+            media: castMember.media || {
+              id: project.id,
+              name: project.name || project.title,
+              type: project.type
+            },
+            order: castMember.order,
+            episodeCount: castMember.episodeCount
           });
-        }
-        
-        const person = castMap.get(personId);
-        person.projectCount++;
-        
-        person.roles.push({
-          character: castMember.character,
-          media: castMember.media || {
-            id: project.id,
-            name: project.name || project.title,
-            type: project.type
-          },
-          order: castMember.order,
-          episodeCount: castMember.episodeCount
         });
-      });
+      }
     }
     
-    // Process crew
+    // Process crew in batches
     if (project.crew) {
-      project.crew.forEach(crewMember => {
-        const personId = crewMember.id;
+      for (let i = 0; i < project.crew.length; i += BATCH_SIZE) {
+        const batch = project.crew.slice(i, i + BATCH_SIZE);
         
-        if (!crewMap.has(personId)) {
-          crewMap.set(personId, {
-            id: personId,
-            name: crewMember.name,
-            profile_path: crewMember.profile_path,
-            roles: [],
-            projectCount: 0
+        batch.forEach(crewMember => {
+          const personId = crewMember.id;
+          
+          if (!crewMap.has(personId)) {
+            crewMap.set(personId, {
+              id: personId,
+              name: crewMember.name,
+              profile_path: crewMember.profile_path,
+              roles: [],
+              projectCount: 0
+            });
+            crewProjectSets.set(personId, new Set());
+          }
+          
+          const person = crewMap.get(personId);
+          const projectSet = crewProjectSets.get(personId);
+          
+          // Only count each project once per person
+          if (!projectSet.has(projectKey)) {
+            projectSet.add(projectKey);
+            person.projectCount++;
+          }
+          
+          person.roles.push({
+            job: crewMember.job,
+            department: crewMember.department,
+            media: crewMember.media || {
+              id: project.id,
+              name: project.name || project.title,
+              type: project.type
+            },
+            episodeCount: crewMember.episodeCount
           });
-        }
-        
-        const person = crewMap.get(personId);
-        person.projectCount++;
-        
-        person.roles.push({
-          job: crewMember.job,
-          department: crewMember.department,
-          media: crewMember.media || {
-            id: project.id,
-            name: project.name || project.title,
-            type: project.type
-          },
-          episodeCount: crewMember.episodeCount
         });
-      });
+      }
     }
   });
   
-  // Filter to only include people who appear in multiple projects
+  // Early filtering to reduce processing load
   const sharedCast = Array.from(castMap.values())
     .filter(person => person.projectCount > 1);
   
   const sharedCrew = Array.from(crewMap.values())
     .filter(person => person.projectCount > 1);
   
+  console.log(`Found ${sharedCast.length} shared cast members and ${sharedCrew.length} shared crew members`);
+  
   // Rank by importance
   const rankedCast = rankByImportance(sharedCast, 'cast');
   const rankedCrew = rankByImportance(sharedCrew, 'crew');
   
-  return {
+  const result = {
     cast: rankedCast,
     crew: rankedCrew
   };
+  
+  // Cache the result
+  memoCache.set(cacheKey, result);
+  
+  // Limit cache size to prevent memory leaks
+  if (memoCache.size > 50) {
+    const oldestKey = memoCache.keys().next().value;
+    memoCache.delete(oldestKey);
+  }
+  
+  console.timeEnd('compareProjects');
+  
+  return result;
 };
 
 /**
@@ -151,12 +214,112 @@ export const rankByImportance = (sharedPeople, type) => {
   }).sort((a, b) => b.importanceScore - a.importanceScore);
 };
 
+// Cache for similar role checks
+const similarRoleCache = new Map();
+
 /**
  * Groups similar roles together
  * @param {Array} roles - Array of roles
  * @returns {Array} Array of grouped roles
  */
 export const groupRoles = (roles) => {
+  // For small role arrays, use the original algorithm
+  if (roles.length <= 10) {
+    return groupRolesOriginal(roles);
+  }
+  
+  console.time('groupRoles');
+  
+  // For larger datasets, use a more efficient approach
+  // Group by character/job first to reduce comparisons
+  const characterGroups = new Map();
+  const jobGroups = new Map();
+  
+  roles.forEach(role => {
+    if (role.character) {
+      // For cast roles, group by exact character match
+      const key = role.character;
+      if (!characterGroups.has(key)) {
+        characterGroups.set(key, []);
+      }
+      characterGroups.get(key).push(role);
+    } else if (role.job) {
+      // For crew roles, group by normalized job
+      const normalizedJob = normalizeJob(role.job);
+      if (!jobGroups.has(normalizedJob)) {
+        jobGroups.set(normalizedJob, []);
+      }
+      jobGroups.get(normalizedJob).push(role);
+    }
+  });
+  
+  const groupedRoles = [];
+  
+  // Process character groups
+  characterGroups.forEach(similarRoles => {
+    groupedRoles.push({
+      roles: similarRoles,
+      primaryRole: getPrimaryRole(similarRoles)
+    });
+  });
+  
+  // Process job groups - these might need further refinement
+  jobGroups.forEach((roles, normalizedJob) => {
+    // For each normalized job group, we might need to split further
+    // based on more specific criteria
+    const subgroups = [];
+    const processed = new Set();
+    
+    for (let i = 0; i < roles.length; i++) {
+      if (processed.has(i)) continue;
+      
+      const role = roles[i];
+      const group = [role];
+      processed.add(i);
+      
+      for (let j = i + 1; j < roles.length; j++) {
+        if (processed.has(j)) continue;
+        
+        const otherRole = roles[j];
+        const cacheKey = `${role.job}|${otherRole.job}`;
+        
+        let areSimilar;
+        if (similarRoleCache.has(cacheKey)) {
+          areSimilar = similarRoleCache.get(cacheKey);
+        } else {
+          areSimilar = areSimilarRoles(role, otherRole);
+          similarRoleCache.set(cacheKey, areSimilar);
+        }
+        
+        if (areSimilar) {
+          group.push(otherRole);
+          processed.add(j);
+        }
+      }
+      
+      subgroups.push(group);
+    }
+    
+    // Add each subgroup
+    subgroups.forEach(group => {
+      groupedRoles.push({
+        roles: group,
+        primaryRole: getPrimaryRole(group)
+      });
+    });
+  });
+  
+  console.timeEnd('groupRoles');
+  
+  return groupedRoles;
+};
+
+/**
+ * Original implementation of groupRoles for small datasets
+ * @param {Array} roles - Array of roles
+ * @returns {Array} Array of grouped roles
+ */
+const groupRolesOriginal = (roles) => {
   const groupedRoles = [];
   const processedIndices = new Set();
   
@@ -188,6 +351,28 @@ export const groupRoles = (roles) => {
   }
   
   return groupedRoles;
+};
+
+/**
+ * Normalizes job titles for initial grouping
+ * @param {string} job - Job title
+ * @returns {string} Normalized job title
+ */
+const normalizeJob = (job) => {
+  const lowerJob = job.toLowerCase();
+  
+  if (lowerJob.includes('direct')) return 'director';
+  if (lowerJob.includes('writ') || lowerJob.includes('screenplay') || lowerJob.includes('story')) return 'writer';
+  if (lowerJob.includes('produc')) return 'producer';
+  if (lowerJob.includes('cinemat') || lowerJob.includes('photography')) return 'cinematographer';
+  if (lowerJob.includes('edit')) return 'editor';
+  if (lowerJob.includes('sound') || lowerJob.includes('audio')) return 'sound';
+  if (lowerJob.includes('music') || lowerJob.includes('compos')) return 'music';
+  if (lowerJob.includes('costume') || lowerJob.includes('makeup') || lowerJob.includes('make-up')) return 'costume';
+  if (lowerJob.includes('art') || lowerJob.includes('design')) return 'design';
+  if (lowerJob.includes('visual') || lowerJob.includes('effect')) return 'vfx';
+  
+  return 'other';
 };
 
 /**
