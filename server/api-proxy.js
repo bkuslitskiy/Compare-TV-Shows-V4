@@ -25,13 +25,23 @@ export function createProxyMiddleware() {
       // Add the API key to the query parameters
       const params = { ...req.query, api_key: apiKey };
       
-      console.log(`Proxying request to: ${url}`);
+      console.log(`Proxying request to: ${url} with params:`, params);
       
-      // Make the request to the TMDB API
-      const response = await axios.get(url, { params });
-      
-      // Return the response data
-      res.json(response.data);
+      try {
+        // Make the request to the TMDB API
+        const response = await axios.get(url, { params });
+        
+        // Log success
+        console.log(`TMDB API response success: ${url} - Status: ${response.status}`);
+        
+        // Return the response data
+        res.json(response.data);
+      } catch (error) {
+        console.error(`TMDB API request failed: ${url}`, error.message);
+        
+        // Re-throw the error to be caught by the outer try/catch
+        throw error;
+      }
     } catch (error) {
       console.error('API Proxy Error:', error.message);
       

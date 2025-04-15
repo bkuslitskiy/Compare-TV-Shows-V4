@@ -4,7 +4,26 @@ This document tracks common errors, issues, and challenges encountered during de
 
 ## Encountered Issues
 
-### 1. Tailwind CSS Utility Class Recognition
+### 1. Duplicate Function Declarations in tmdb.js
+
+**Issue:** The tmdb.js file had duplicate declarations of the `sleep` and `retryWithBackoff` functions.
+
+**Impact:** This caused TypeScript errors about redeclaring block-scoped variables, which could potentially lead to unexpected behavior in the application.
+
+**Root Cause:** The utility functions were defined at the top of the file and then accidentally duplicated further down in the file, likely during a refactoring or copy-paste operation.
+
+**Solution:**
+1. Removed the duplicate function declarations
+2. Added more detailed logging to the API proxy for better debugging
+3. Verified that the search and comparison functionality works correctly after the fix
+
+**Prevention:**
+- Use a linter to catch duplicate declarations
+- Implement a code review process
+- Be cautious when refactoring or copying code
+- Consider extracting utility functions to a separate file to avoid duplication
+
+### 2. Tailwind CSS Utility Class Recognition
 
 **Issue:** Tailwind CSS was not recognizing utility classes like `bg-gray-100`, causing styling to fail.
 

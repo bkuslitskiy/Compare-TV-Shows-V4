@@ -26,6 +26,11 @@ We have completed the initial setup phase and have implemented most of the core 
   - Converted @apply directives to standard CSS
   - Updated component files to remove problematic utility classes
 
+- Fixed duplicate function declarations in tmdb.js:
+  - Removed duplicate sleep and retryWithBackoff functions
+  - Added more detailed logging to api-proxy.js for better debugging
+  - Verified search and comparison functionality is working correctly
+
 - Created project structure:
   - Components organized by feature (layout, search, comparison)
   - Context providers for state management

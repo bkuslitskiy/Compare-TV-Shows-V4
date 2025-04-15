@@ -1,13 +1,54 @@
 import { get } from './api';
 
 /**
+ * Sleep for a specified number of milliseconds
+ * @param {number} ms - Milliseconds to sleep
+ * @returns {Promise} Promise that resolves after the specified time
+ */
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Retry a function with exponential backoff
+ * @param {Function} fn - Function to retry
+ * @param {number} maxRetries - Maximum number of retries
+ * @param {number} baseDelay - Base delay in milliseconds
+ * @returns {Promise} Promise resolving to the function result
+ */
+const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
+  let lastError;
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      console.warn(`Attempt ${i + 1} failed, retrying...`, error.message);
+      lastError = error;
+      
+      // Exponential backoff with jitter
+      const delay = baseDelay * Math.pow(2, i) * (0.5 + Math.random() * 0.5);
+      await sleep(delay);
+    }
+  }
+  
+  throw lastError;
+};
+
+
+/**
  * Search for movies, TV shows, and people
  * @param {string} query - Search query
  * @param {number} page - Page number (default: 1)
  * @returns {Promise} Promise resolving to search results
  */
 export const searchMulti = async (query, page = 1) => {
-  return get('/search/multi', { query, page, include_adult: false });
+  try {
+    const result = await get('/search/multi', { query, page, include_adult: false });
+    return result || { results: [] };
+  } catch (error) {
+    console.error('Search error:', error);
+    // Return empty results instead of throwing
+    return { results: [] };
+  }
 };
 
 /**
@@ -69,18 +110,73 @@ export const getMovieCredits = async (id) => {
 };
 
 /**
+ * Get aggregated credits for a TV show
+ * @param {number} id - TV show ID
+ * @returns {Promise} Promise resolving to aggregated credits
+ */
+export const getShowAggregatedCredits = async (id) => {
+  return get(`/tv/${id}/aggregate_credits`);
+};
+
+
+/**
  * Get all credits for a TV show (across all episodes)
  * @param {number} id - TV show ID
  * @returns {Promise} Promise resolving to aggregated credits
  */
 export const getShowAllCredits = async (id) => {
   try {
+    // First try to get aggregated credits (more efficient)
+    try {
+      const aggregatedCredits = await getShowAggregatedCredits(id);
+      const show = await getShowDetails(id);
+      
+      // Process aggregated cast
+      const processedCast = aggregatedCredits.cast.map(castMember => ({
+        ...castMember,
+        episodeCount: castMember.total_episode_count,
+        media: {
+          id: show.id,
+          name: show.name,
+          type: 'tv',
+          first_air_date: show.first_air_date,
+          last_air_date: show.last_air_date
+        }
+      }));
+      
+      // Process aggregated crew
+      const processedCrew = aggregatedCredits.crew.map(crewMember => ({
+        ...crewMember,
+        episodeCount: crewMember.total_episode_count,
+        media: {
+          id: show.id,
+          name: show.name,
+          type: 'tv',
+          first_air_date: show.first_air_date,
+          last_air_date: show.last_air_date
+        }
+      }));
+      
+      return {
+        id: show.id,
+        name: show.name,
+        type: 'tv',
+        first_air_date: show.first_air_date,
+        last_air_date: show.last_air_date,
+        cast: processedCast,
+        crew: processedCrew
+      };
+    } catch (error) {
+      console.warn('Aggregated credits not available, falling back to episode-by-episode collection');
+      // Fall back to episode-by-episode collection
+    }
+    
     // Get show details
     const show = await getShowDetails(id);
     
     // Initialize credits arrays
-    const allCast = [];
-    const allCrew = [];
+    const allCast = new Map();
+    const allCrew = new Map();
     
     // Process each season
     for (const season of show.seasons) {
@@ -88,35 +184,41 @@ export const getShowAllCredits = async (id) => {
       if (season.season_number === 0) continue;
       
       // Get season details with episodes
-      const seasonDetails = await getSeasonEpisodes(id, season.season_number);
+      const seasonDetails = await retryWithBackoff(() => 
+        getSeasonEpisodes(id, season.season_number)
+      );
       
-      // Process each episode
+      // Process each episode with rate limiting
       for (const episode of seasonDetails.episodes) {
-        // Get episode credits
-        const credits = await getEpisodeCredits(id, season.season_number, episode.episode_number);
+        // Get episode credits with retry logic
+        const credits = await retryWithBackoff(() => 
+          getEpisodeCredits(id, season.season_number, episode.episode_number)
+        );
         
         // Process cast
         if (credits.cast) {
           for (const castMember of credits.cast) {
-            // Check if this cast member is already in our list
-            const existingCast = allCast.find(c => c.id === castMember.id);
+            const castId = castMember.id;
             
-            if (existingCast) {
+            if (allCast.has(castId)) {
               // Update existing cast member
+              const existingCast = allCast.get(castId);
               if (!existingCast.episodes.includes(episode.id)) {
                 existingCast.episodes.push(episode.id);
                 existingCast.episodeCount++;
               }
             } else {
               // Add new cast member
-              allCast.push({
+              allCast.set(castId, {
                 ...castMember,
                 episodes: [episode.id],
                 episodeCount: 1,
                 media: {
                   id: show.id,
                   name: show.name,
-                  type: 'tv'
+                  type: 'tv',
+                  first_air_date: show.first_air_date,
+                  last_air_date: show.last_air_date
                 }
               });
             }
@@ -126,32 +228,36 @@ export const getShowAllCredits = async (id) => {
         // Process crew
         if (credits.crew) {
           for (const crewMember of credits.crew) {
-            // Check if this crew member is already in our list with the same job
-            const existingCrew = allCrew.find(c => 
-              c.id === crewMember.id && c.job === crewMember.job
-            );
+            // Create a unique key for crew member + job
+            const crewKey = `${crewMember.id}-${crewMember.job}`;
             
-            if (existingCrew) {
+            if (allCrew.has(crewKey)) {
               // Update existing crew member
+              const existingCrew = allCrew.get(crewKey);
               if (!existingCrew.episodes.includes(episode.id)) {
                 existingCrew.episodes.push(episode.id);
                 existingCrew.episodeCount++;
               }
             } else {
               // Add new crew member
-              allCrew.push({
+              allCrew.set(crewKey, {
                 ...crewMember,
                 episodes: [episode.id],
                 episodeCount: 1,
                 media: {
                   id: show.id,
                   name: show.name,
-                  type: 'tv'
+                  type: 'tv',
+                  first_air_date: show.first_air_date,
+                  last_air_date: show.last_air_date
                 }
               });
             }
           }
         }
+        
+        // Add a small delay between episode requests to avoid rate limiting
+        await sleep(300);
       }
     }
     
@@ -159,8 +265,10 @@ export const getShowAllCredits = async (id) => {
       id: show.id,
       name: show.name,
       type: 'tv',
-      cast: allCast,
-      crew: allCrew
+      first_air_date: show.first_air_date,
+      last_air_date: show.last_air_date,
+      cast: Array.from(allCast.values()),
+      crew: Array.from(allCrew.values())
     };
   } catch (error) {
     console.error(`Error getting all credits for TV show ${id}:`, error);
@@ -187,7 +295,8 @@ export const getMovieWithCredits = async (id) => {
       media: {
         id: movie.id,
         title: movie.title,
-        type: 'movie'
+        type: 'movie',
+        release_date: movie.release_date
       }
     }));
     
@@ -196,7 +305,8 @@ export const getMovieWithCredits = async (id) => {
       media: {
         id: movie.id,
         title: movie.title,
-        type: 'movie'
+        type: 'movie',
+        release_date: movie.release_date
       }
     }));
     
@@ -220,6 +330,7 @@ export default {
   getSeasonEpisodes,
   getEpisodeCredits,
   getMovieCredits,
+  getShowAggregatedCredits,
   getShowAllCredits,
   getMovieWithCredits
 };

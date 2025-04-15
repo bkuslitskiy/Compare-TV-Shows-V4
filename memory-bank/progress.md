@@ -115,3 +115,6 @@ We have completed the initial setup phase and have implemented most of the core 
 - 4/14/2025: Implemented comparison algorithm to find shared cast and crew
 - 4/14/2025: Implemented results display with tabs for cast and crew
 - 4/14/2025: Fixed Tailwind CSS utility class recognition issues
+- 4/14/2025: Fixed duplicate function declarations in tmdb.js
+- 4/14/2025: Added more detailed logging to API proxy for better debugging
+- 4/14/2025: Verified search and comparison functionality works correctly
