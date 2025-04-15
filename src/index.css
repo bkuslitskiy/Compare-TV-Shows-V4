@@ -2,6 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom styles */
+/* These styles were previously in @layer components but have been converted to standard CSS */
+
+/* Accessibility focus styles */
+button:focus-visible {
+  outline: none;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: rgb(59 130 246 / 0.5); /* ring-blue-500 */
+}
+
+.dark button:focus-visible {
+  --tw-ring-color: rgb(96 165 250 / 0.5); /* dark:ring-blue-400 */
+}
+
+[role="option"]:focus, [role="button"]:focus {
+  outline: none;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: rgb(59 130 246 / 0.5); /* ring-blue-500 */
+}
+
+.dark [role="option"]:focus, .dark [role="button"]:focus {
+  --tw-ring-color: rgb(96 165 250 / 0.5); /* dark:ring-blue-400 */
+}
+
 /* Base styles */
 body {
   background-color: #f3f4f6; /* bg-gray-100 */
@@ -129,4 +157,134 @@ h3 {
 .dark .card {
   background-color: #1f2937; /* dark:bg-gray-800 */
   border-color: #374151; /* dark:border-gray-700 */
+}
+
+/* Comparison table styles */
+.comparison-table {
+  display: grid;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: auto;
+}
+
+.table-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark .table-header {
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.header-cell {
+  padding: 1rem;
+  text-align: center;
+  font-weight: 600;
+  background-color: #f3f4f6; /* bg-gray-100 */
+}
+
+.dark .header-cell {
+  background-color: #1f2937; /* dark:bg-gray-800 */
+}
+
+.table-row {
+  width: 100%;
+}
+
+.table-row:hover > div {
+  background-color: #f9fafb; /* bg-gray-50 */
+}
+
+.dark .table-row:hover > div {
+  background-color: #111827; /* dark:bg-gray-900 */
+}
+
+.person-cell {
+  background-color: white;
+  position: sticky;
+  left: 0;
+  z-index: 15;
+  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.dark .person-cell {
+  background-color: #1f2937; /* dark:bg-gray-800 */
+  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure all cells have consistent height */
+.comparison-table > div > div {
+  min-height: 5rem;
+}
+
+/* Ensure the header cells have proper height for project info */
+.comparison-table > .table-header > div {
+  min-height: 9rem;
+}
+
+/* Responsive image styles */
+.thumbnail-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  height: 12rem; /* h-48 (48 * 0.25rem = 12rem) */
+}
+
+.thumbnail-container img {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.thumbnail-container:hover img {
+  transform: scale(1.05);
+}
+
+/* Selection grid */
+.selection-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr)); /* grid-cols-1 */
+  gap: 1rem; /* gap-4 */
+  outline: none; /* focus:outline-none */
+}
+
+/* sm breakpoint (640px and up) */
+@media (min-width: 640px) {
+  .selection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* sm:grid-cols-2 */
+  }
+}
+
+/* md breakpoint (768px and up) */
+@media (min-width: 768px) {
+  .selection-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)); /* md:grid-cols-3 */
+  }
+}
+
+/* lg breakpoint (1024px and up) */
+@media (min-width: 1024px) {
+  .selection-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)); /* lg:grid-cols-4 */
+  }
+}
+
+@media (max-width: 480px) {
+  .selection-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr)); /* Single column for very small screens */
+  }
+  
+  .comparison-table {
+    font-size: 0.875rem;
+  }
+  
+  .header-cell, .person-cell, .role-cell {
+    padding: 0.5rem;
+  }
 }

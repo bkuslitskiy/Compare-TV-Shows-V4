@@ -26,6 +26,9 @@ export default {
     'dark:hover:bg-gray-700',
     'dark:focus:bg-gray-700',
     'focus:bg-gray-100',
+    'h-48',
+    'w-full',
+    'object-cover',
   ],
   darkMode: 'class',
   theme: {

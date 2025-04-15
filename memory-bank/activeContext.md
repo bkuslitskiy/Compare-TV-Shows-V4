@@ -6,10 +6,10 @@ This document tracks the current work focus, recent changes, next steps, and act
 
 We have completed the initial setup phase and have implemented most of the core functionality. The current focus is on:
 
-1. Enhancing the UI/UX with keyboard navigation and role filtering
-2. Optimizing performance for large datasets
-3. Preparing for AWS deployment
-4. Implementing comprehensive testing
+1. Enhancing the UI/UX with role filtering
+2. Adding caching layer to reduce API requests
+3. Optimizing performance for large datasets
+4. Preparing for AWS deployment
 
 ## Recent Changes
 
@@ -19,6 +19,7 @@ We have completed the initial setup phase and have implemented most of the core 
   - Comparison algorithm to find shared cast and crew
   - Results display with tabs for cast and crew
   - Theme system with light/dark/system options
+  - Keyboard navigation throughout the application
 
 - Fixed Tailwind CSS utility class recognition issues:
   - Added safelist for commonly used utility classes
@@ -41,15 +42,20 @@ We have completed the initial setup phase and have implemented most of the core 
   - Express server for API proxy
   - Rate limiting for TMDB API requests
   - Error handling for API requests
+  
+- Implemented comprehensive testing:
+  - Set up Playwright for end-to-end testing
+  - Created tests for search functionality
+  - Created tests for selection management
+  - Created tests for comparison results
+  - Created tests for accessibility features
 
 ## Next Steps
 
-1. Implement keyboard navigation throughout the application
-2. Create role filtering system for comparison results
-3. Add caching layer to reduce API requests
-4. Optimize performance for TV shows with many seasons
-5. Write Playwright tests for core functionality
-6. Prepare for AWS deployment
+1. Create role filtering system for comparison results
+2. Add caching layer to reduce API requests
+3. Optimize performance for TV shows with many seasons
+4. Prepare for AWS deployment
 
 ## Active Decisions and Considerations
 
@@ -75,9 +81,10 @@ We have completed the initial setup phase and have implemented most of the core 
 1. **Component Structure**: Using container/presentational pattern for components
 2. **Custom Hooks**: Extracting complex logic into custom hooks
 3. **Service Modules**: Isolating API and business logic in service modules
-4. **Keyboard Navigation**: Ensuring all functionality is accessible via keyboard
+4. **Keyboard Navigation**: Using the useKeyboardNavigation hook for consistent keyboard interaction
 5. **Theme System**: Supporting light, dark, and system themes
 6. **Code Organization**: Following a modular approach with clear separation of concerns
+7. **Accessibility**: Ensuring proper ARIA attributes and keyboard focus management
 
 ## Learnings and Project Insights
 
@@ -92,5 +99,4 @@ We have completed the initial setup phase and have implemented most of the core 
 1. **API Key Security**: Ensuring the TMDB API key remains secure
 2. **Data Collection Efficiency**: Optimizing collection of TV show episode data for shows with many seasons
 3. **Performance Optimization**: Need to implement caching to reduce API requests
-4. **Keyboard Navigation**: Implementing comprehensive keyboard navigation throughout the application
-5. **Role Filtering**: Creating an intuitive filtering system for different role types
+4. **Role Filtering**: Creating an intuitive filtering system for different role types
