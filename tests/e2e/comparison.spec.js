@@ -148,4 +148,67 @@ test.describe('Comparison Functionality', () => {
     // Verify cast + crew approximately equals all
     expect(castCount + crewCount).toBeCloseTo(allCount, -1); // Allow for some margin of error
   });
+  
+  test('should use advanced filtering options', async ({ page }) => {
+    await page.goto('/');
+    
+    // Add Breaking Bad
+    await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
+    await page.waitForSelector('[role="option"]');
+    await page.click('[role="option"]');
+    
+    // Add Better Call Saul
+    await page.fill('input[placeholder*="Search"]', 'Better Call Saul');
+    await page.waitForSelector('[role="option"]');
+    await page.click('[role="option"]');
+    
+    // Wait for comparison results to load
+    await page.waitForSelector('text=Comparison Results', { timeout: 30000 });
+    
+    // Get the initial count of people
+    const initialCount = await page.locator('.table-row').count();
+    
+    // Open advanced filters
+    await page.click('button:has-text("Advanced Filters")');
+    
+    // Set minimum episodes to 5
+    await page.fill('#min-episodes', '5');
+    
+    // Get the filtered count
+    const filteredByEpisodesCount = await page.locator('.table-row').count();
+    
+    // Verify filtered count is less than or equal to initial count
+    expect(filteredByEpisodesCount).toBeLessThanOrEqual(initialCount);
+    
+    // Check "Main Cast Only"
+    await page.check('#main-cast-only');
+    
+    // Get the count after main cast filter
+    const mainCastCount = await page.locator('.table-row').count();
+    
+    // Verify main cast count is less than or equal to filtered by episodes count
+    expect(mainCastCount).toBeLessThanOrEqual(filteredByEpisodesCount);
+    
+    // Search for a specific term
+    await page.fill('#search-filter', 'Walter');
+    
+    // Get the count after search
+    const searchCount = await page.locator('.table-row').count();
+    
+    // Verify search narrows down results
+    expect(searchCount).toBeLessThanOrEqual(mainCastCount);
+    
+    // Reset filters
+    await page.click('button:has-text("Reset Filters")');
+    
+    // Verify count is back to initial count
+    const resetCount = await page.locator('.table-row').count();
+    expect(resetCount).toBeCloseTo(initialCount, -1); // Allow for some margin of error
+    
+    // Close advanced filters
+    await page.click('button[aria-label="Close filters"]');
+    
+    // Verify advanced filters panel is closed
+    await expect(page.locator('text=Advanced Filters').first()).not.toBeVisible();
+  });
 });
