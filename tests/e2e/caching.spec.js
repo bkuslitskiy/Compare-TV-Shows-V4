@@ -5,7 +5,7 @@ test.describe('Caching Functionality', () => {
   test.setTimeout(60000);
   
   test('should show cache status button', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:5173/');
     
     // Verify the cache status button is visible
     const cacheButton = page.locator('button[aria-label="Show cache status"]');
@@ -16,7 +16,7 @@ test.describe('Caching Functionality', () => {
   });
   
   test('should open cache status panel when clicked', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:5173/');
     
     // Click the cache status button
     await page.click('button[aria-label="Show cache status"]');
@@ -38,7 +38,7 @@ test.describe('Caching Functionality', () => {
   });
   
   test('should cache search results', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:5173/');
     
     // Perform a search
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -63,7 +63,7 @@ test.describe('Caching Functionality', () => {
   });
   
   test('should clear cache when button is clicked', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:5173/');
     
     // Perform a search to populate cache
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -97,7 +97,7 @@ test.describe('Caching Functionality', () => {
   });
   
   test('should cache TV show details', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:5173/');
     
     // Clear cache first
     await page.click('button[aria-label="Show cache status"]');
