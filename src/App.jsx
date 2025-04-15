@@ -3,6 +3,7 @@ import MainLayout from './components/layout/MainLayout';
 import SearchBar from './components/search/SearchBar';
 import SelectionList from './components/search/SelectionList';
 import ComparisonResults from './components/comparison/ComparisonResults';
+import CacheStatus from './components/ui/CacheStatus';
 import { useSelection } from './context/SelectionContext';
 import { useComparison } from './context/ComparisonContext';
 
@@ -23,39 +24,26 @@ function App() {
     }
   };
   
-  const handleBack = () => {
-    clearComparison();
-  };
-  
   return (
     <MainLayout>
-      {comparisonResults ? (
-        <div>
-          <button 
-            className="mb-4 btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
-            onClick={handleBack}
-          >
-            ← Back to Selection
-          </button>
-          
-          <ComparisonResults 
-            sharedCast={comparisonResults.cast} 
-            sharedCrew={comparisonResults.crew} 
-            projects={projects} 
-          />
-        </div>
-      ) : (
+      <CacheStatus />
+      <div className="space-y-8">
+        {/* Header Section */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold mb-4">Compare TV Shows and Movies</h2>
-          <p className="text-lg mb-8">
+          <h1 className="text-3xl font-bold mb-2">Compare TV Shows and Movies</h1>
+          <p className="text-lg mb-6">
             Find shared cast and crew members between your favorite shows and movies.
           </p>
-          
-          <div className="max-w-md mx-auto mb-8">
+        </div>
+        
+        {/* Search and Selection Section */}
+        <div className="space-y-6">
+          <div className="max-w-md mx-auto">
             <SearchBar onSelect={addSelection} />
           </div>
           
-          <div className="mb-8">
+          <div>
+            <h2 className="text-xl font-bold mb-3">Selected Projects</h2>
             <SelectionList 
               selections={selections} 
               onRemove={removeSelection} 
@@ -63,7 +51,7 @@ function App() {
           </div>
           
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
               <p className="text-red-800 dark:text-red-200">{error}</p>
             </div>
           )}
@@ -103,12 +91,41 @@ function App() {
           </div>
           
           {selections.length < 2 && (
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
               Please select at least 2 TV shows or movies to compare
             </p>
           )}
         </div>
-      )}
+        
+        {/* Results Section */}
+        {comparisonResults && (
+          <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Comparison Results</h2>
+              <div className="flex space-x-2">
+                <button 
+                  className="btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+                  onClick={clearComparison}
+                >
+                  Clear Results
+                </button>
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
+                  Add More
+                </button>
+              </div>
+            </div>
+            
+            <ComparisonResults 
+              sharedCast={comparisonResults.cast} 
+              sharedCrew={comparisonResults.crew} 
+              projects={projects} 
+            />
+          </div>
+        )}
+      </div>
     </MainLayout>
   );
 }

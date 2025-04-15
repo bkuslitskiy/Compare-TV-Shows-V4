@@ -118,14 +118,18 @@ src/
 │   │   ├── SearchBar.jsx    # Search input with autosuggestions
 │   │   └── SelectionList.jsx # List of selected shows/movies
 │   └── ui/                  # Reusable UI components
+│       └── CacheStatus.jsx  # Cache status display component
 ├── context/                 # React Context providers
 │   ├── ComparisonContext.jsx # Comparison context provider
 │   └── SelectionContext.jsx  # Selection context provider
 ├── hooks/                   # Custom React hooks
+│   └── useKeyboardNavigation.js # Hook for keyboard navigation
 ├── index.css                # Global CSS
 ├── main.jsx                 # Application entry point
 ├── services/                # Service layer
 │   ├── api.js               # Base API client
+│   ├── cache.js             # Cache service for localStorage
+│   ├── cachedApi.js         # API client with caching
 │   ├── comparison.js        # Comparison logic
 │   └── tmdb.js              # TMDB specific service
 ├── styles/                  # Additional styles
@@ -133,12 +137,33 @@ src/
     └── tmdbHelpers.js       # Helper functions for TMDB data
 ```
 
+### UI Components
+
+```
+src/components/ui/
+└── CacheStatus.jsx          # Cache status display component
+```
+
+**Functions in CacheStatus.jsx:**
+- `formatBytes(bytes, decimals)` - Formats bytes to a human-readable string
+- `formatTime(timestamp)` - Formats a timestamp to a human-readable string
+- `calculateHitRate(stats)` - Calculates cache hit rate
+- `CacheStatus()` - Displays cache statistics and provides a button to clear the cache
+  - Shows cache hit rate, hits, misses, sets, expired items, errors, size, and last reset
+  - Provides a button to clear the cache
+  - Updates stats every 5 seconds
+
 ## Tests
 
 ```
 tests/
 ├── e2e/                     # End-to-end tests
-│   └── app.spec.js          # App tests
+│   ├── app.spec.js          # App tests
+│   ├── search.spec.js       # Search functionality tests
+│   ├── selection.spec.js    # Selection management tests
+│   ├── comparison.spec.js   # Comparison functionality tests
+│   ├── accessibility.spec.js # Accessibility tests
+│   └── caching.spec.js      # Caching functionality tests
 ├── fixtures/                # Test fixtures
 │   └── sample-data.js       # Sample test data
 └── playwright.config.js     # Playwright configuration
@@ -228,6 +253,8 @@ src/context/
 ```
 src/services/
 ├── api.js                   # Base API client
+├── cache.js                 # Cache service for localStorage
+├── cachedApi.js             # API client with caching
 ├── tmdb.js                  # TMDB specific service
 └── comparison.js            # Comparison logic
 ```
@@ -238,6 +265,30 @@ src/services/
   - Adds request and response interceptors for logging
 - `get(url, params)` - Makes a GET request
 - `post(url, data)` - Makes a POST request
+
+**Functions in cache.js:**
+- `set(key, data, ttl)` - Sets a cache item with optional TTL
+- `get(key)` - Gets a cache item
+- `remove(key)` - Removes a cache item
+- `clear()` - Clears all cache items
+- `getKeys()` - Gets all cache keys
+- `getStats()` - Gets cache statistics
+- `getSize()` - Gets the total size of the cache in bytes
+- `getMetadata(key)` - Gets cache item metadata
+
+**Functions in cachedApi.js:**
+- `getCached(endpoint, params, ttl)` - Gets data from API with caching
+- `searchMulti(query, page)` - Searches for movies, TV shows, and people with caching
+- `getShowDetails(id)` - Gets TV show details with caching
+- `getMovieDetails(id)` - Gets movie details with caching
+- `getShowSeasons(id)` - Gets all seasons for a TV show with caching
+- `getSeasonEpisodes(showId, seasonNumber)` - Gets all episodes for a season with caching
+- `getEpisodeCredits(showId, seasonNumber, episodeNumber)` - Gets credits for an episode with caching
+- `getMovieCredits(id)` - Gets credits for a movie with caching
+- `getShowAggregatedCredits(id)` - Gets aggregated credits for a TV show with caching
+- `clearCache()` - Clears all API cache
+- `getCacheStats()` - Gets cache statistics
+- `getCacheSize()` - Gets cache size in bytes
 
 **Functions in tmdb.js:**
 - `searchMulti(query, page)` - Searches for movies, TV shows, and people
@@ -261,6 +312,22 @@ src/services/
 - `groupRoles(roles)` - Groups similar roles together
 - `areSimilarRoles(role1, role2)` - Checks if two roles are similar
 - `getPrimaryRole(roles)` - Gets the primary role from a list of similar roles
+
+## Custom Hooks
+
+```
+src/hooks/
+└── useKeyboardNavigation.js # Hook for keyboard navigation
+```
+
+**Functions in useKeyboardNavigation.js:**
+- `useKeyboardNavigation({ items, onSelect, onEscape, vertical, loop, autoFocus })` - Custom hook for keyboard navigation
+  - Manages focus state for a list of items
+  - Handles keyboard navigation (arrow keys, Home, End, Enter, Space, Escape)
+  - Provides props for container and item elements
+  - Supports vertical and horizontal navigation
+  - Supports looping from last to first item and vice versa
+  - Supports auto-focusing the first item
 
 ## Utility Functions
 
