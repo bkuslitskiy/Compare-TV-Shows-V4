@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Search Functionality', () => {
   test('should show search results when typing in search bar', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Use a consistent search term that will likely return stable results
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -23,7 +23,7 @@ test.describe('Search Functionality', () => {
   });
 
   test('should handle unusual search terms gracefully', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Use a search term unlikely to return results
     await page.fill('input[placeholder*="Search"]', 'xyzpdq12345notarealtitle');
@@ -33,7 +33,7 @@ test.describe('Search Functionality', () => {
   });
   
   test('should support keyboard navigation in search results', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Type a search term
     await page.fill('input[placeholder*="Search"]', 'Game of');
@@ -54,7 +54,7 @@ test.describe('Search Functionality', () => {
   });
   
   test('should clear search results when input is cleared', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Type a search term
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');

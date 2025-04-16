@@ -39,6 +39,11 @@ export const compareProjects = (projects) => {
   // Process each project
   projects.forEach(project => {
     const projectKey = `${project.id}-${project.type || project.media_type}`;
+    const projectName = project.name || project.title; // Handle both TV shows and movies
+    
+    console.log(`Processing project: ${projectName} (${projectKey})`);
+    console.log(`Cast members: ${project.cast ? project.cast.length : 0}`);
+    console.log(`Crew members: ${project.crew ? project.crew.length : 0}`);
     
     // Process cast in batches
     if (project.cast) {
@@ -68,13 +73,23 @@ export const compareProjects = (projects) => {
             person.projectCount++;
           }
           
+          // Create media object with consistent properties
+          const mediaInfo = castMember.media || {
+            id: project.id,
+            type: project.type || project.media_type
+          };
+          
+          // Ensure both name and title are set for consistency
+          if (project.name) {
+            mediaInfo.name = project.name;
+          }
+          if (project.title) {
+            mediaInfo.title = project.title;
+          }
+          
           person.roles.push({
             character: castMember.character,
-            media: castMember.media || {
-              id: project.id,
-              name: project.name || project.title,
-              type: project.type
-            },
+            media: mediaInfo,
             order: castMember.order,
             episodeCount: castMember.episodeCount
           });
@@ -110,14 +125,24 @@ export const compareProjects = (projects) => {
             person.projectCount++;
           }
           
+          // Create media object with consistent properties
+          const mediaInfo = crewMember.media || {
+            id: project.id,
+            type: project.type || project.media_type
+          };
+          
+          // Ensure both name and title are set for consistency
+          if (project.name) {
+            mediaInfo.name = project.name;
+          }
+          if (project.title) {
+            mediaInfo.title = project.title;
+          }
+          
           person.roles.push({
             job: crewMember.job,
             department: crewMember.department,
-            media: crewMember.media || {
-              id: project.id,
-              name: project.name || project.title,
-              type: project.type
-            },
+            media: mediaInfo,
             episodeCount: crewMember.episodeCount
           });
         });

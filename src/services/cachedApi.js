@@ -4,7 +4,7 @@ import cacheService from './cache';
 /**
  * Cache TTL values in milliseconds
  */
-const CACHE_TTL = {
+export const CACHE_TTL = {
   SEARCH: 15 * 60 * 1000, // 15 minutes
   DETAILS: 24 * 60 * 60 * 1000, // 24 hours
   CREDITS: 24 * 60 * 60 * 1000, // 24 hours
@@ -165,6 +165,7 @@ export const getCacheSize = () => {
 };
 
 export default {
+  CACHE_TTL,
   getCached,
   searchMulti,
   getShowDetails,

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Selection Management', () => {
   test('should add and remove items from selection list', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Add first item
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -28,7 +28,7 @@ test.describe('Selection Management', () => {
   });
 
   test('should maintain selections between page refreshes', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Add an item
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -46,7 +46,7 @@ test.describe('Selection Management', () => {
   });
   
   test('should support keyboard navigation in selection list', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Add first item
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -75,7 +75,7 @@ test.describe('Selection Management', () => {
   });
   
   test('should clear all selections when clear button is clicked', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Add first item
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');

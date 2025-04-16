@@ -2,17 +2,17 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Application', () => {
   test('should load the homepage with all required elements', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Verify the page title
     await expect(page).toHaveTitle(/Compare TV Shows/);
     
     // Verify the main heading is visible
-    const heading = page.locator('h2:has-text("Compare TV Shows and Movies")');
+    const heading = page.locator('h1:has-text("Compare TV Shows and Movies")');
     await expect(heading).toBeVisible();
     
     // Verify the search input is visible
-    const searchInput = page.locator('input[placeholder*="Search for TV shows"]');
+    const searchInput = page.locator('input[placeholder*="Search"]');
     await expect(searchInput).toBeVisible();
     
     // Verify the theme toggle buttons are visible
@@ -27,7 +27,7 @@ test.describe('Application', () => {
   });
   
   test('should toggle between light and dark themes', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Click the dark theme button
     await page.click('button[aria-label="Dark theme"]');
@@ -51,12 +51,15 @@ test.describe('Application', () => {
   test('should have responsive layout', async ({ page }) => {
     // Test with a desktop viewport
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
+    
+    // Wait for the selection grid to be visible
+    await page.waitForSelector('.selection-grid');
     
     // Verify desktop layout
     const desktopLayout = await page.evaluate(() => {
       const selectionGrid = document.querySelector('.selection-grid');
-      return window.getComputedStyle(selectionGrid).gridTemplateColumns;
+      return selectionGrid ? window.getComputedStyle(selectionGrid).gridTemplateColumns : '';
     });
     
     // Should have multiple columns on desktop
@@ -65,10 +68,13 @@ test.describe('Application', () => {
     // Test with a mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
     
+    // Wait for the layout to adjust
+    await page.waitForTimeout(500);
+    
     // Verify mobile layout
     const mobileLayout = await page.evaluate(() => {
       const selectionGrid = document.querySelector('.selection-grid');
-      return window.getComputedStyle(selectionGrid).gridTemplateColumns;
+      return selectionGrid ? window.getComputedStyle(selectionGrid).gridTemplateColumns : '';
     });
     
     // Should have a single column on mobile
@@ -77,7 +83,7 @@ test.describe('Application', () => {
   
   test('should handle errors gracefully', async ({ page }) => {
     // Test with a bad URL
-    await page.goto('/#badroute');
+    await page.goto('http://localhost:3000/#badroute');
     
     // Verify the app still loads
     await expect(page).toHaveTitle(/Compare TV Shows/);

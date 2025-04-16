@@ -2,10 +2,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Comparison Functionality', () => {
   // This test may take longer due to API calls for detailed cast/crew information
-  test.setTimeout(60000);
+  test.setTimeout(120000);
   
   test('should show comparison results for selected shows', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Add Breaking Bad
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -17,9 +17,12 @@ test.describe('Comparison Functionality', () => {
     await page.waitForSelector('[role="option"]');
     await page.click('[role="option"]');
     
+    // Click compare button
+    await page.click('button:has-text("Compare Selections")');
+    
     // Wait for comparison results to load
     // This may take some time with the real API
-    await page.waitForSelector('text=Comparison Results', { timeout: 30000 });
+    await page.waitForSelector('text=Comparison Results', { timeout: 60000 });
     
     // Verify some expected shared cast/crew are shown
     // These are known to be in both shows
@@ -40,7 +43,7 @@ test.describe('Comparison Functionality', () => {
   });
 
   test('should handle shows with no shared cast/crew', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Add Breaking Bad (drama)
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -52,8 +55,11 @@ test.describe('Comparison Functionality', () => {
     await page.waitForSelector('[role="option"]');
     await page.click('[role="option"]');
     
+    // Click compare button
+    await page.click('button:has-text("Compare Selections")');
+    
     // Wait for comparison results to load
-    await page.waitForSelector('text=Comparison Results', { timeout: 30000 });
+    await page.waitForSelector('text=Comparison Results', { timeout: 60000 });
     
     // Check if we see the "no shared cast or crew" message
     // Note: There's a small chance some crew member worked on both shows
@@ -71,7 +77,7 @@ test.describe('Comparison Functionality', () => {
   });
   
   test('should sort comparison results', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Add Breaking Bad
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -83,8 +89,11 @@ test.describe('Comparison Functionality', () => {
     await page.waitForSelector('[role="option"]');
     await page.click('[role="option"]');
     
+    // Click compare button
+    await page.click('button:has-text("Compare Selections")');
+    
     // Wait for comparison results to load
-    await page.waitForSelector('text=Comparison Results', { timeout: 30000 });
+    await page.waitForSelector('text=Comparison Results', { timeout: 60000 });
     
     // Get the default order (by importance)
     const initialOrder = await page.locator('.person-cell').allTextContents();
@@ -109,7 +118,7 @@ test.describe('Comparison Functionality', () => {
   });
   
   test('should filter by department', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Add Breaking Bad
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -121,8 +130,11 @@ test.describe('Comparison Functionality', () => {
     await page.waitForSelector('[role="option"]');
     await page.click('[role="option"]');
     
+    // Click compare button
+    await page.click('button:has-text("Compare Selections")');
+    
     // Wait for comparison results to load
-    await page.waitForSelector('text=Comparison Results', { timeout: 30000 });
+    await page.waitForSelector('text=Comparison Results', { timeout: 60000 });
     
     // Get the count of all people
     const allCount = await page.locator('.table-row').count();
@@ -150,7 +162,7 @@ test.describe('Comparison Functionality', () => {
   });
   
   test('should use advanced filtering options', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Add Breaking Bad
     await page.fill('input[placeholder*="Search"]', 'Breaking Bad');
@@ -162,8 +174,11 @@ test.describe('Comparison Functionality', () => {
     await page.waitForSelector('[role="option"]');
     await page.click('[role="option"]');
     
+    // Click compare button
+    await page.click('button:has-text("Compare Selections")');
+    
     // Wait for comparison results to load
-    await page.waitForSelector('text=Comparison Results', { timeout: 30000 });
+    await page.waitForSelector('text=Comparison Results', { timeout: 60000 });
     
     // Get the initial count of people
     const initialCount = await page.locator('.table-row').count();

@@ -8,7 +8,7 @@ import { createProxyMiddleware, rateLimitMiddleware } from './api-proxy.js';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = 3002; // Use a fixed port for consistency
 
 // Middleware
 app.use(cors());

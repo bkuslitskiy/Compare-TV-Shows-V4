@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Get the API base URL from environment variables or use a default
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002/api';
 
 /**
  * Create an API client with Axios

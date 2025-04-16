@@ -1,0 +1,645 @@
+<!DOCTYPE html><html lang="en"><head>
+    <script type="module">
+import RefreshRuntime from "/@react-refresh"
+RefreshRuntime.injectIntoGlobalHook(window)
+window.$RefreshReg$ = () => {}
+window.$RefreshSig$ = () => (type) => type
+window.__vite_plugin_react_preamble_installed__ = true
+</script>
+
+    <script type="module" src="/@vite/client"></script>
+
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/vite.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Compare cast and crew between TV shows and movies">
+    <title>Compare TV Shows</title>
+  <style type="text/css" data-vite-dev-id="E:/Coding Projects/Compare TV Shows V4/src/index.css">/*! tailwindcss v4.1.4 | MIT License | https://tailwindcss.com */
+@layer properties;
+.visible {
+  visibility: visible;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+.absolute {
+  position: absolute;
+}
+.fixed {
+  position: fixed;
+}
+.relative {
+  position: relative;
+}
+.static {
+  position: static;
+}
+.sticky {
+  position: sticky;
+}
+.z-5 {
+  z-index: 5;
+}
+.z-10 {
+  z-index: 10;
+}
+.z-50 {
+  z-index: 50;
+}
+.container {
+  width: 100%;
+}
+.mx-auto {
+  margin-inline: auto;
+}
+.mt-auto {
+  margin-top: auto;
+}
+.ml-auto {
+  margin-left: auto;
+}
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.block {
+  display: block;
+}
+.contents {
+  display: contents;
+}
+.flex {
+  display: flex;
+}
+.grid {
+  display: grid;
+}
+.inline-block {
+  display: inline-block;
+}
+.inline-flex {
+  display: inline-flex;
+}
+.table-row {
+  display: table-row;
+}
+.h-full {
+  height: 100%;
+}
+.min-h-screen {
+  min-height: 100vh;
+}
+.w-full {
+  width: 100%;
+}
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+.flex-grow {
+  flex-grow: 1;
+}
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.items-center {
+  align-items: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-x-auto {
+  overflow-x: auto;
+}
+.overflow-y-auto {
+  overflow-y: auto;
+}
+.rounded-full {
+  border-radius: calc(infinity * 1px);
+}
+.border {
+  border-style: var(--tw-border-style);
+  border-width: 1px;
+}
+.border-t {
+  border-top-style: var(--tw-border-style);
+  border-top-width: 1px;
+}
+.border-r {
+  border-right-style: var(--tw-border-style);
+  border-right-width: 1px;
+}
+.border-b {
+  border-bottom-style: var(--tw-border-style);
+  border-bottom-width: 1px;
+}
+.border-b-2 {
+  border-bottom-style: var(--tw-border-style);
+  border-bottom-width: 2px;
+}
+.border-dashed {
+  --tw-border-style: dashed;
+  border-style: dashed;
+}
+.bg-transparent {
+  background-color: transparent;
+}
+.object-cover {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.capitalize {
+  text-transform: capitalize;
+}
+.italic {
+  font-style: italic;
+}
+.opacity-50 {
+  opacity: 50%;
+}
+.ring-2 {
+  --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+  box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+.outline {
+  outline-style: var(--tw-outline-style);
+  outline-width: 1px;
+}
+.filter {
+  filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+}
+.hover\:underline {
+  &:hover {
+    @media (hover: hover) {
+      text-decoration-line: underline;
+    }
+  }
+}
+.focus\:border-transparent {
+  &:focus {
+    border-color: transparent;
+  }
+}
+.focus\:ring-2 {
+  &:focus {
+    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+}
+.focus\:ring-offset-2 {
+  &:focus {
+    --tw-ring-offset-width: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  }
+}
+.focus\:outline-none {
+  &:focus {
+    --tw-outline-style: none;
+    outline-style: none;
+  }
+}
+button:focus-visible {
+  outline: none;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+}
+.dark button:focus-visible {
+  --tw-ring-color: rgb(96 165 250 / 0.5);
+}
+[role="option"]:focus, [role="button"]:focus {
+  outline: none;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+}
+.dark [role="option"]:focus, .dark [role="button"]:focus {
+  --tw-ring-color: rgb(96 165 250 / 0.5);
+}
+body {
+  background-color: #f3f4f6;
+  color: #111827;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.dark body {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+a {
+  font-weight: 500;
+  color: #2563eb;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #3b82f6;
+}
+.dark a {
+  color: #60a5fa;
+}
+.dark a:hover {
+  color: #93c5fd;
+}
+h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+}
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(0, 0, 0, 0.1);
+}
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+.btn-primary:focus {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(59, 130, 246, 0.5);
+}
+.dark .btn-primary {
+  background-color: #3b82f6;
+}
+.dark .btn-primary:hover {
+  background-color: #2563eb;
+}
+.dark .btn-primary:focus {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(96, 165, 250, 0.5);
+}
+.btn-secondary {
+  background-color: #db2777;
+  color: white;
+}
+.btn-secondary:hover {
+  background-color: #be185d;
+}
+.btn-secondary:focus {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(219, 39, 119, 0.5);
+}
+.dark .btn-secondary {
+  background-color: #ec4899;
+}
+.dark .btn-secondary:hover {
+  background-color: #db2777;
+}
+.dark .btn-secondary:focus {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(236, 72, 153, 0.5);
+}
+.card {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+.dark .card {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+.comparison-table {
+  display: grid;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: auto;
+}
+.table-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+.dark .table-header {
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+.header-cell {
+  padding: 1rem;
+  text-align: center;
+  font-weight: 600;
+  background-color: #f3f4f6;
+}
+.dark .header-cell {
+  background-color: #1f2937;
+}
+.table-row {
+  width: 100%;
+}
+.table-row:hover > div {
+  background-color: #f9fafb;
+}
+.dark .table-row:hover > div {
+  background-color: #111827;
+}
+.person-cell {
+  background-color: white;
+  position: sticky;
+  left: 0;
+  z-index: 15;
+  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.05);
+}
+.dark .person-cell {
+  background-color: #1f2937;
+  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.2);
+}
+.comparison-table > div > div {
+  min-height: 5rem;
+}
+.comparison-table > .table-header > div {
+  min-height: 9rem;
+}
+.thumbnail-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  height: 12rem;
+}
+.thumbnail-container img {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.thumbnail-container:hover img {
+  transform: scale(1.05);
+}
+.selection-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+  outline: none;
+}
+@media (min-width: 640px) {
+  .selection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 768px) {
+  .selection-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .selection-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  .selection-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  .comparison-table {
+    font-size: 0.875rem;
+  }
+  .header-cell, .person-cell, .role-cell {
+    padding: 0.5rem;
+  }
+}
+.virtualized-list {
+  overflow-x: visible !important;
+  overflow-y: auto !important;
+}
+.virtualized-list > div {
+  overflow: visible !important;
+}
+.virtualized-list .table-row {
+  display: grid;
+  width: 100%;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-blur {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-brightness {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-contrast {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-grayscale {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-hue-rotate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-invert {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-opacity {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-saturate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-sepia {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-drop-shadow-size {
+  syntax: "*";
+  inherits: false;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-border-style: solid;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-outline-style: solid;
+      --tw-blur: initial;
+      --tw-brightness: initial;
+      --tw-contrast: initial;
+      --tw-grayscale: initial;
+      --tw-hue-rotate: initial;
+      --tw-invert: initial;
+      --tw-opacity: initial;
+      --tw-saturate: initial;
+      --tw-sepia: initial;
+      --tw-drop-shadow: initial;
+      --tw-drop-shadow-color: initial;
+      --tw-drop-shadow-alpha: 100%;
+      --tw-drop-shadow-size: initial;
+    }
+  }
+}
+</style></head>
+  <body>
+    <div id="root"><div class="min-h-screen flex flex-col"><header class="bg-white dark:bg-gray-800 shadow-md"><div class="container mx-auto px-4 py-4 flex justify-between items-center"><h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">Compare TV Shows</h1><div class="flex items-center space-x-2"><span class="sr-only">Choose theme:</span><button class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 " aria-pressed="false" aria-label="Light theme"><svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-2.05-4.95a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zm-9.9-1.05a1 1 0 100 2h1a1 1 0 100-2h-1zm4.95-2.05a1 1 0 011.414 0l.707.707a1 1 0 11-1.414 1.414l-.707-.707a1 1 0 010-1.414z"></path></svg></button><button class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 " aria-pressed="false" aria-label="Dark theme"><svg class="w-5 h-5 text-gray-900 dark:text-gray-100" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg></button><button class="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-gray-200 dark:bg-gray-700" aria-pressed="true" aria-label="System theme"><svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm11 1H6v8l4-2 4 2V6z" clip-rule="evenodd"></path></svg></button></div></div></header><main class="flex-grow container mx-auto px-4 py-8"><div class="fixed bottom-4 right-4 z-50"><button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md shadow-lg flex items-center space-x-2" aria-label="Show cache status"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm11 1H6v8l4-2 4 2V6z" clip-rule="evenodd"></path></svg><span>Cache: 0.0%</span></button></div><div class="space-y-8"><div class="text-center"><h1 class="text-3xl font-bold mb-2">Compare TV Shows and Movies</h1><p class="text-lg mb-6">Find shared cast and crew members between your favorite shows and movies.</p></div><div class="space-y-6"><div class="max-w-md mx-auto"><div class="relative"><div class="relative"><input placeholder="Search for TV shows or movies..." class="w-full p-3 border rounded-lg bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent" aria-label="Search for TV shows or movies" type="text" value="" style=""></div></div></div><div><h2 class="text-xl font-bold mb-3">Selected Projects</h2><div class="selection-grid" role="toolbar" aria-orientation="horizontal" tabindex="0" aria-label="Selected TV shows and movies"><div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700 " tabindex="-1" role="button" aria-selected="false"><div class="thumbnail-container"><img alt="The Matrix" class="w-full object-cover" src="https://image.tmdb.org/t/p/w342/dXNAPwY7VrqMAo51EKhhCJfaGb5.jpg"><button class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" aria-label="Remove The Matrix" tabindex="-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><div class="p-3"><h3 class="font-bold text-base mb-1 truncate">The Matrix</h3><div class="flex items-center text-sm text-gray-500 dark:text-gray-400"><span class="capitalize">movie</span><span class="ml-2">(1999)</span></div></div></div><div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700 " tabindex="-1" role="button" aria-selected="false"><div class="thumbnail-container"><img alt="The Matrix Reloaded" class="w-full object-cover" src="https://image.tmdb.org/t/p/w342/9TGHDvWrqKBzwDxDodHYXEmOE6J.jpg"><button class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" aria-label="Remove The Matrix Reloaded" tabindex="-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div><div class="p-3"><h3 class="font-bold text-base mb-1 truncate">The Matrix Reloaded</h3><div class="flex items-center text-sm text-gray-500 dark:text-gray-400"><span class="capitalize">movie</span><span class="ml-2">(2003)</span></div></div></div></div></div><div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"><p class="text-red-800 dark:text-red-200">Error comparing projects. Please try again.</p></div><div class="flex justify-center space-x-4"><button class="btn btn-primary">Compare Selections<span class="ml-2 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 rounded-full w-6 h-6 inline-flex items-center justify-center text-sm">2</span></button><button class="btn bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600">Clear All</button></div></div></div></main><footer class="bg-white dark:bg-gray-800 shadow-inner mt-auto"><div class="container mx-auto px-4 py-4 text-center"><p class="text-sm">Powered by <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">The Movie Database</a></p><p class="text-xs text-gray-500 dark:text-gray-400 mt-1">This product uses the TMDB API but is not endorsed or certified by TMDB.</p></div></footer></div></div>
+    <script type="module" src="/src/main.jsx"></script>
+  
+
+</body></html>

@@ -12,6 +12,8 @@ export function createProxyMiddleware() {
       // Get API key from environment variables
       const apiKey = process.env.TMDB_API_KEY;
       
+      console.log('API Key from env:', apiKey ? 'Present' : 'Missing');
+      
       if (!apiKey) {
         return res.status(500).json({
           error: 'API key not configured',
@@ -25,10 +27,12 @@ export function createProxyMiddleware() {
       // Add the API key to the query parameters
       const params = { ...req.query, api_key: apiKey };
       
-      console.log(`Proxying request to: ${url} with params:`, params);
+      console.log(`Proxying request to: ${url}`);
+      console.log('With params:', JSON.stringify(params));
       
       try {
         // Make the request to the TMDB API
+        console.log('Making request to TMDB API...');
         const response = await axios.get(url, { params });
         
         // Log success
@@ -37,7 +41,13 @@ export function createProxyMiddleware() {
         // Return the response data
         res.json(response.data);
       } catch (error) {
-        console.error(`TMDB API request failed: ${url}`, error.message);
+        console.error(`TMDB API request failed: ${url}`);
+        console.error('Error details:', error.message);
+        
+        if (error.response) {
+          console.error('Response status:', error.response.status);
+          console.error('Response data:', JSON.stringify(error.response.data));
+        }
         
         // Re-throw the error to be caught by the outer try/catch
         throw error;
@@ -51,7 +61,7 @@ export function createProxyMiddleware() {
         // that falls out of the range of 2xx
         const { status, data } = error.response;
         
-        console.error(`TMDB API Error (${status}):`, data);
+        console.error(`TMDB API Error (${status}):`, JSON.stringify(data));
         
         return res.status(status).json({
           error: 'TMDB API Error',

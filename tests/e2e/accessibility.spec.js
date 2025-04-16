@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Accessibility Features', () => {
   test('should support full keyboard navigation', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Focus the search input
     await page.focus('input[placeholder*="Search"]');
@@ -39,7 +39,7 @@ test.describe('Accessibility Features', () => {
   });
 
   test('should have proper focus indicators', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Focus the search input
     await page.focus('input[placeholder*="Search"]');
@@ -67,7 +67,7 @@ test.describe('Accessibility Features', () => {
   });
   
   test('should have proper ARIA attributes', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Check search input has proper ARIA attributes
     await expect(page.locator('input[placeholder*="Search"]')).toHaveAttribute('aria-autocomplete', 'list');
@@ -91,7 +91,7 @@ test.describe('Accessibility Features', () => {
   });
   
   test('should support theme preferences', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Check light theme button
     await page.click('button[aria-label="Light theme"]');
@@ -111,7 +111,7 @@ test.describe('Accessibility Features', () => {
   
   test('should have sufficient color contrast', async ({ page }) => {
     // This is a basic check - ideally you'd use an accessibility testing library
-    await page.goto('/');
+    await page.goto('http://localhost:3000/');
     
     // Check light theme contrast
     await page.click('button[aria-label="Light theme"]');

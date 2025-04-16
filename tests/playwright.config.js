@@ -7,8 +7,15 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 1, // Added retry for local tests
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
+  
+  // Run setup script before tests
+  globalSetup: './setup.js',
+  
+  // Add teardown to kill servers after tests
+  globalTeardown: './teardown.js',
+  
   use: {
-    baseURL: 'http://localhost:3001', // Updated to match the port our app is running on
+    baseURL: 'http://localhost:3000', // Use a consistent port
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
@@ -34,10 +41,5 @@ export default defineConfig({
     //   },
     // },
   ],
-  webServer: {
-    command: 'npm run dev',
-    port: 3001, // Updated to match the port our app is running on
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000, // Increased timeout for server startup
-  },
+  // We're handling the web server in our setup.js and teardown.js scripts
 });

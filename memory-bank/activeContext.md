@@ -1,131 +1,78 @@
 # Active Context
 
-This document tracks the current work focus, recent changes, next steps, and active decisions for the Compare TV Shows project.
+This document captures the current focus of development, recent changes, and active decisions.
 
-## Current Work Focus
+## Current Focus
 
-We have completed the initial setup phase, implemented core functionality, and optimized performance. The current focus is on:
+We are currently focused on improving the reliability and testability of the comparison functionality in the application. This includes:
 
-1. Preparing for AWS deployment
-2. Implementing additional features
-3. Improving browser compatibility and mobile responsiveness
+1. Fixing bugs in the comparison process
+2. Enhancing the testing infrastructure
+3. Improving error handling and debugging capabilities
+4. Ensuring consistent data handling between movies and TV shows
 
 ## Recent Changes
 
-- Implemented core functionality:
-  - Search with autosuggestions from TMDB API
-  - Selection management for TV shows and movies
-  - Comparison algorithm to find shared cast and crew
-  - Results display with tabs for cast and crew
-  - Theme system with light/dark/system options
-  - Keyboard navigation throughout the application
-  
-- Implemented performance optimizations:
-  - Added virtualized lists for large result sets using react-window
-  - Implemented pagination for search results
-  - Optimized comparison algorithm with memoization and batch processing
-  - Added caching for API requests with localStorage
-  - Improved role grouping algorithm for large datasets
+### Fixed Comparison Functionality
 
-- Fixed Tailwind CSS utility class recognition issues:
-  - Added safelist for commonly used utility classes
-  - Added docs directory to content paths
-  - Converted @apply directives to standard CSS
-  - Updated component files to remove problematic utility classes
+We identified and fixed a critical issue with the comparison functionality:
 
-- Fixed duplicate function declarations in tmdb.js:
-  - Removed duplicate sleep and retryWithBackoff functions
-  - Added more detailed logging to api-proxy.js for better debugging
-  - Verified search and comparison functionality is working correctly
+- The `CACHE_TTL` constant in `cachedApi.js` was not being exported, causing errors when referenced from `tmdb.js`
+- This resulted in a `TypeError: Cannot read properties of undefined (reading 'CREDITS')` error
+- We fixed this by properly exporting the constant and including it in the default export
 
-- Created project structure:
-  - Components organized by feature (layout, search, comparison)
-  - Context providers for state management
-  - Service modules for API and business logic
-  - Utility functions for common operations
+### Enhanced Data Consistency
 
-- Set up local development environment:
-  - Express server for API proxy
-  - Rate limiting for TMDB API requests
-  - Error handling for API requests
-  
-- Implemented comprehensive testing:
-  - Set up Playwright for end-to-end testing
-  - Created tests for search functionality
-  - Created tests for selection management
-  - Created tests for comparison results
-  - Created tests for accessibility features
-  
-- Implemented advanced role filtering system:
-  - Added department filters with keyboard navigation
-  - Created advanced filtering panel with multiple filter options
-  - Added minimum episodes filter for TV shows
-  - Added main cast only filter
-  - Implemented search within results
-  - Added filter reset functionality
-  
-- Implemented caching layer:
-  - Created cache service using localStorage
-  - Added TTL (time to live) for cache items
-  - Implemented cache statistics tracking
-  - Created CacheStatus component to display cache stats
-  - Added cache clearing functionality
-  - Wrapped API service with caching
-  - Created Playwright tests for caching functionality
-  - Fixed caching implementation issue in tmdb.js where cache was not being properly populated
-  - Improved error handling for API timeouts and failures
+We improved the handling of data inconsistencies between movies and TV shows:
+
+- Movies use `title` property while TV shows use `name` property
+- Updated the comparison logic to handle both properties consistently
+- Added fallback mechanisms to ensure proper display regardless of the data source
+
+### Improved Testing Infrastructure
+
+We significantly enhanced the testing infrastructure:
+
+- Created robust setup and teardown scripts for automated testing
+- Implemented proper server startup and shutdown for tests
+- Added detailed error logging and debugging tools
+- Fixed test failures related to server availability
+- Added screenshot and HTML capture on test failures
+
+## Active Decisions
+
+### Testing Strategy
+
+- We've decided to use a combination of unit tests and end-to-end tests
+- End-to-end tests use Playwright to simulate real user interactions
+- Custom setup/teardown scripts ensure consistent test environments
+- Tests are designed to be resilient to API rate limiting and network issues
+
+### Error Handling
+
+- We're implementing more comprehensive error handling throughout the application
+- Console errors are captured and logged for debugging
+- User-facing error messages are clear and actionable
+- Fallbacks are provided where possible to prevent complete failure
+
+### Caching Strategy
+
+- We're using a multi-level caching strategy to improve performance
+- API responses are cached with appropriate TTLs
+- Complex operations (like movie credits) have dedicated cache keys
+- Cache size is monitored to prevent memory issues
 
 ## Next Steps
 
-1. Prepare for AWS deployment
-   - Set up AWS Lambda for API proxy
-   - Configure S3 for static hosting
-   - Set up CloudFront for content delivery
-2. Implement additional features
-   - Add export functionality for comparison results
-   - Implement user preferences storage
-   - Add more detailed person information
+1. Implement more comprehensive error handling for edge cases
+2. Add more automated tests for different comparison scenarios
+3. Optimize the comparison algorithm for better performance with large datasets
+4. Enhance the UI with more visual indicators of relationships
+5. Implement cache management tools to prevent excessive memory usage
 
-## Active Decisions and Considerations
+## Technical Insights
 
-### Technical Decisions
-
-1. **JavaScript vs TypeScript**: Using JavaScript (ES6+) for development
-2. **Styling Approach**: Using Tailwind CSS with standard CSS for base styles
-3. **API Security**: Using AWS Lambda proxy in production, local server during development
-4. **Testing Strategy**: Implementing Playwright tests throughout development
-5. **State Management**: Using React Context API for global state
-6. **Build Tool**: Using Vite for faster development experience
-
-### Development Approach
-
-1. **Documentation-First**: Creating comprehensive documentation before implementation
-2. **Test-Driven Development**: Writing tests for each feature as it's developed
-3. **Phased Implementation**: Implementing core functionality first, then adding optimizations
-4. **Git Strategy**: Committing after testing all functionality since last commit
-5. **Folder Structure**: Maintaining a clear separation of concerns in the project structure
-
-## Important Patterns and Preferences
-
-1. **Component Structure**: Using container/presentational pattern for components
-2. **Custom Hooks**: Extracting complex logic into custom hooks
-3. **Service Modules**: Isolating API and business logic in service modules
-4. **Keyboard Navigation**: Using the useKeyboardNavigation hook for consistent keyboard interaction
-5. **Theme System**: Supporting light, dark, and system themes
-6. **Code Organization**: Following a modular approach with clear separation of concerns
-7. **Accessibility**: Ensuring proper ARIA attributes and keyboard focus management
-
-## Learnings and Project Insights
-
-1. **TMDB API Structure**: Understanding the relationships between shows, seasons, episodes, and credits
-2. **Role Importance**: Implemented a system to rank roles by importance based on job type and episode count
-3. **Performance Considerations**: Need to optimize for TV shows with many seasons and episodes
-4. **Tailwind CSS Configuration**: Learned about safelist and content paths for proper utility class recognition
-5. **API Rate Limiting**: Implemented rate limiting to prevent exceeding TMDB API limits
-
-## Current Challenges
-
-1. **API Key Security**: Ensuring the TMDB API key remains secure
-2. **AWS Deployment**: Setting up and configuring AWS services for production
-3. **Browser Compatibility**: Ensuring consistent experience across different browsers
-4. **Mobile Responsiveness**: Improving the user experience on smaller screens
+- The TMDB API has inconsistent property naming between different endpoints
+- Rate limiting is essential to prevent API failures during heavy usage
+- Browser-based testing requires careful setup and teardown to be reliable
+- Proper error handling significantly improves debugging and user experience

@@ -180,6 +180,11 @@ function ComparisonResults({ sharedCast = [], sharedCrew = [], projects = [] }) 
     }
   };
   
+  // Function to get the project name (handles both TV shows and movies)
+  const getProjectName = (project) => {
+    return project.name || project.title || 'Unknown Project';
+  };
+  
   // Function to find a person's role in a specific project
   const findPersonRoleInProject = (person, project) => {
     return person.roles.find(role => 
@@ -348,7 +353,7 @@ function ComparisonResults({ sharedCast = [], sharedCrew = [], projects = [] }) 
             >
               <img
                 src={getImageUrl(project.poster_path, 'w185')}
-                alt={project.title || project.name}
+                alt={getProjectName(project)}
                 className="w-full h-48 object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
@@ -356,7 +361,7 @@ function ComparisonResults({ sharedCast = [], sharedCrew = [], projects = [] }) 
                 }}
               />
               <div className="p-2">
-                <h3 className="font-bold text-sm truncate">{project.title || project.name}</h3>
+                <h3 className="font-bold text-sm truncate">{getProjectName(project)}</h3>
                 <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   {getProjectYears(project)}
                 </div>
@@ -476,14 +481,14 @@ function ComparisonResults({ sharedCast = [], sharedCrew = [], projects = [] }) 
                 <div className="flex flex-col items-center">
                   <img
                     src={getImageUrl(project.poster_path, 'w92')}
-                    alt={project.title || project.name}
+                    alt={getProjectName(project)}
                     className="w-16 h-24 object-cover mb-2 rounded shadow"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = '/placeholder-image.png';
                     }}
                   />
-                  <div className="font-bold text-sm">{project.title || project.name}</div>
+                  <div className="font-bold text-sm">{getProjectName(project)}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     {getProjectYears(project)}
                   </div>
